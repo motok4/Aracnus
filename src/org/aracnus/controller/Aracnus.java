@@ -6,13 +6,14 @@ import java.util.concurrent.LinkedTransferQueue;
 
 public class Aracnus {
 
-	private Set<String> outgoingLinks = new HashSet<String>();
-	private LinkedTransferQueue<String > outgoingLinksToVisit = new LinkedTransferQueue<>();
+	private Set<Url> outgoingLinks = new HashSet<Url>();
+	private LinkedTransferQueue<Url> outgoingLinksToVisit = new LinkedTransferQueue<>();
 	
 	public void addSeed(String string) {
-		if( !outgoingLinks.contains( string )){
-			outgoingLinks.add(string);
-			outgoingLinksToVisit.add(string);
+		Url url = new Url( string,0,null);
+		if( !outgoingLinks.contains( url )){
+			outgoingLinks.add(url);
+			outgoingLinksToVisit.add(url);
 		}
 		
 	}

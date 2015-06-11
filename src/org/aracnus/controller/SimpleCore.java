@@ -16,25 +16,25 @@ import sun.net.www.http.HttpClient;
 public class SimpleCore extends AbstractCore {
 
 	private final static Pattern FILTERS = Pattern.compile(".*(\\.(css|js|gif|jpg"
-			+ "|png|mp3|mp3|zip|gz))$");
+			+ "|png|mp3|mp3|zip|gz|pdf|ppt|pptx|docx))$");
 	private final static Pattern EXTENSION = Pattern.compile("[a-zA-Z0-9]*\\.[a-zA-Z0-9#&?]*");
 
 
 	@Override
-	public Boolean shouldVisit(String url) {
-		String href = url.toLowerCase();        
-        return !FILTERS.matcher(href).matches();// && href.startsWith("http://g1.globo.com/politica/noticia/");
+	public Boolean shouldVisit(Url url) {
+		String href = url.getUrl().toLowerCase();        
+        return !FILTERS.matcher(href).matches() ;//&& href.startsWith("http://programo.com.br/");
 	}
 
 	@Override
 	public void visited(String html) {
 		
 	}
-	
-	public void howtovisit( String url ){
+	@Override
+	public void howtovisit( Url url ){
 		URL obj;
 		try {
-			obj = new URL(url);
+			obj = new URL(url.getUrl());
 			HttpURLConnection con = (HttpURLConnection) obj.openConnection();			
 			// optional default is GET
 			con.setRequestMethod("GET");			
@@ -49,16 +49,26 @@ public class SimpleCore extends AbstractCore {
 			}
 			in.close();
 			String html = response.toString();
-			Document doc = Jsoup.parse(html);
-		    org.jsoup.select.Elements alist = doc.select("a");
-		    for( org.jsoup.nodes.Element a:alist){
-		    	String aurl = a.attr("href");
-		    	if( !aurl.isEmpty() && aurl != null && aurl.length() > 3 ){
-		    		if( shouldVisit(aurl) ){
-		    			tryAdd(aurl);
-		    		}
-		    	}
-		    }
+			//trata a profundidade. Se o level da url corrente for menor ou igual ao nível
+			//coletamos os outgoingLinks, caso contrário, já estamos na profundidade máxima
+			// e não fazemos nada
+			if( url.getLevel() <= this.getDepth() ){
+				Document doc = Jsoup.parse(html);
+			    org.jsoup.select.Elements alist = doc.select("a");
+			    for( org.jsoup.nodes.Element a:alist){
+			    	String _aurl = a.attr("href");
+			    	//cria um objeto url a partir das url coletadas na pagina
+			    	//e linka esse "novo url" ao pai "url" e acrenta mais um ao level
+			    	//que representa a profundidade
+			    	Url aurl = new Url( _aurl, url.getLevel()+1, url );
+			    	if( !_aurl.isEmpty() && _aurl != null && _aurl.length() > 3 ){
+			    		if( shouldVisit(aurl) ){
+			    			tryAdd(aurl);
+			    		}
+			    	}
+			    }
+			}
+			
 		    visited(html);
 			
 		} catch (MalformedURLException e) {

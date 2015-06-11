@@ -1,27 +1,28 @@
 package org.aracnus.controller;
 
-import java.io.IOException;
-import java.util.List;
-
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.firefox.FirefoxDriver;
-import org.openqa.selenium.htmlunit.HtmlUnitDriver;
+import java.util.ArrayList;
 
 
 public class test {
 
-	
+
 	public static void main(String[] args)  {
-		DriverCore d = new DriverCore();
+		
 		SimpleCore c = new SimpleCore();
+		c.setMaxPageToFetch(1000);
 		Aracnus ar = new Aracnus();
-		Aracnus ar2 = new Aracnus();
-		d.setMaxPageToFetch(100);
 		ar.addSeed("http://localhost/crawllertest/");
-		ar2.addSeed("http://localhost/crawllertest/");
-		ar.execute(d);
+		
+		long ini = System.currentTimeMillis();
+		ar.execute(c);
+        long tempo = System.currentTimeMillis() - ini;
+        System.out.println("TOTAL DE PAGINAS: "+c.getOutgoingLinks().size() );
+        System.out.println("TEMPO TOTAL: "+ (float) tempo/1000 +" segundos");
+//        
+        /*
+         * TOTAL DE PAGINAS: 87
+TEMPO TOTAL: 90.136 segundos
+         */
 //		ar2.execute(d);
 //		for(String url : c.getOutgoingLinks() ){
 //			for( String url2 : d.getOutgoingLinks() ){

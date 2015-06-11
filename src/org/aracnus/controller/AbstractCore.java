@@ -18,87 +18,50 @@ import org.openqa.selenium.firefox.FirefoxDriver;
 public abstract class AbstractCore {
 
 	protected String path = null;
-	private Set<String> outgoingLinks = new HashSet<String>();
-	private LinkedTransferQueue<String > outgoingLinksToVisit = new LinkedTransferQueue<>();
+	private Set<Url> outgoingLinks = new HashSet<Url>();
+	private LinkedTransferQueue<Url > outgoingLinksToVisit = new LinkedTransferQueue<>();
 	protected int maxPageToFetch = 10;
+	protected int depth = Integer.MAX_VALUE;
 	
 	public AbstractCore(){}
-	public AbstractCore(Set<String> outgoingLinks,
-			LinkedTransferQueue<String> outgoingLinksToVisit) {
+	public AbstractCore(Set<Url> outgoingLinks,
+			LinkedTransferQueue<Url> outgoingLinksToVisit) {
 		this.setOutgoingLinks(outgoingLinks);
 		this.setOutgoingLinksToVisit(outgoingLinksToVisit);
 	}
 	
-	public abstract Boolean shouldVisit( String url);
+	public abstract Boolean shouldVisit( Url url);
 	public abstract void visited( String html );
-	public void tryAdd( String url){
+	public void tryAdd( Url url){
 		if( outgoingLinks.size() < maxPageToFetch && !outgoingLinks.contains(url)){
 			outgoingLinks.add(url);
 			outgoingLinksToVisit.add(url);
 		}
 	}
 	public void execute(){
-		
 		while( !outgoingLinksToVisit.isEmpty() ){
-			String  url = outgoingLinksToVisit.remove();
-			url = treatUrl(url);
-			System.out.println("URL: "+url);
+			Url  url = outgoingLinksToVisit.remove();
+			url.setUrl( treatUrl(url.getUrl()));
+			System.out.println("URL: "+url.getUrl());
 			howtovisit(url);
 		}
 	}
-	public void howtovisit( String url ){
-		WebDriver driver = new FirefoxDriver();
-	    driver.get(url);
-	    
-//	    List<WebElement> list = driver.findElements( By.cssSelector("Button.glbComentarios-btn.glbComentarios-link-cor.glbComentarios-bt-lista-respostas"));
-//	    for( int i=0; i<list.size(); i++){
-//	    	String id = list.get(i).getText().trim().split(" ")[0];
-//	    	id = !id.isEmpty() && id != null ? id: "0"; 
-//	    	int n = Integer.parseInt(id);
-//	    	if( n > 0){	  
-//	    		try{
-//	    			list.get(i).click();
-//	    		}catch(Exception e){
-//	    		}
-//    			List<WebElement> mais= driver.findElements( By.cssSelector("Button.glbComentarios-lista-bt-paginar"));
-//    			for( int j=0; j<list.size(); j++){
-//    				try{
-//    					mais.get(j).click();
-//    				}catch(Exception e){
-//    					
-//    				}
-//    			}
-//
-//	    	}
-//        }
-	    String html = driver.getPageSource();
-	    driver.quit();
-	    Document doc = Jsoup.parse(html);
-	    org.jsoup.select.Elements alist = doc.select("a");
-	    for( org.jsoup.nodes.Element a:alist){
-	    	String aurl = a.attr("href");
-	    	if( !aurl.isEmpty() && aurl != null && aurl.length() > 3 ){
-	    		if( shouldVisit(aurl) ){
-	    			tryAdd(aurl);
-	    		}
-	    	}
-	    }
-	    visited(html);
-	}
+	
 
-	public Set<String> getOutgoingLinks() {
+	public Set<Url> getOutgoingLinks() {
 		return outgoingLinks;
 	}
 
-	public void setOutgoingLinks(Set<String> outgoingLinks) {
+	public void setOutgoingLinks(Set<Url> outgoingLinks) {
 		this.outgoingLinks = outgoingLinks;
 	}
 
-	public LinkedTransferQueue<String > getOutgoingLinksToVisit() {
+	public LinkedTransferQueue<Url > getOutgoingLinksToVisit() {
 		return outgoingLinksToVisit;
 	}
+	
 
-	public void setOutgoingLinksToVisit(LinkedTransferQueue<String > outgoingLinksToVisit) {
+	public void setOutgoingLinksToVisit(LinkedTransferQueue<Url > outgoingLinksToVisit) {
 		this.outgoingLinksToVisit = outgoingLinksToVisit;
 	}
 	
@@ -134,6 +97,14 @@ public abstract class AbstractCore {
 	public String getPath() {
 		// TODO Auto-generated method stub
 		return path;
+	}
+	public abstract void howtovisit(Url url);
+	
+	public int getDepth() {
+		return depth;
+	}
+	public void setDepth(int depth) {
+		this.depth = depth;
 	}
 	
 

@@ -17,7 +17,6 @@ import org.openqa.selenium.firefox.FirefoxDriver;
 
 public abstract class AbstractCore {
 
-	protected String path = null;
 	private Set<Url> outgoingLinks = new HashSet<Url>();
 	private LinkedTransferQueue<Url > outgoingLinksToVisit = new LinkedTransferQueue<>();
 	protected int maxPageToFetch = 10;
@@ -41,7 +40,7 @@ public abstract class AbstractCore {
 	public void execute(){
 		while( !outgoingLinksToVisit.isEmpty() ){
 			Url  url = outgoingLinksToVisit.remove();
-			url.setUrl( treatUrl(url.getUrl()));
+			url.setUrl( treatUrl(url));
 			System.out.println("URL: "+url.getUrl());
 			howtovisit(url);
 		}
@@ -68,36 +67,43 @@ public abstract class AbstractCore {
 	public void setMaxPageToFetch( int max){
 		this.maxPageToFetch = max;
 	}
-	public void setPath(String url ){
-		this.path = url;
-	}
-	public String treatUrl(String url) {
-		if( path==null){
-			path=url;
-		}else if(!url.contains("http://") && !url.contains("https://")){
-			String partialUrl = url.substring(0, url.lastIndexOf("/")+1 );
+
+	public String treatUrl(Url url) {
+		String urlfinal = "";
+		String path = "";
+		if( url.getParent() != null ){
+			path=url.getParent().getUrl();
+		}else{
+			path=url.getUrl();
+		}
+		//verifica se não tem um padrao http ou http que pode indicar url relativa
+		if(!url.getUrl().contains("http://") && !url.getUrl().contains("https://")){
+			//Verifica se na url existe o padrao parciais, por exemplo, 
+			// evitar url: http://localhost/crawllertest/home/localhost/crawllertest/home/page1.html
+			String partialUrl = url.getUrl().substring(0, url.getUrl().lastIndexOf("/")+1 );
 			if( path.contains(partialUrl)){
 				path=path.replace( partialUrl , "");
 			}
+			//encontrar a ultima barra da url para remover por exemplo as paginas.html
+			//http://localhost/crawllertest/home/page1.html
+			//ira ficar assim
+			//http://localhost/crawllertest/home/
 			int ultimabarra= path.lastIndexOf("/");
 			String nurl = path.substring(ultimabarra, path.length() );
 			if( nurl.contains(".")){
 				nurl = path.substring(0,ultimabarra )+"/";
-			}
-			if( url.contains("../") || path.contains(".")){
-				url = nurl+url;
 			}else{
-				url=path+url;
+				nurl = path;
 			}
+			urlfinal = nurl+url.getUrl();
+		}else{
+			urlfinal = url.getUrl();
 		}
-		path = url;
-		return url;
+		urlfinal = urlfinal.replace("//", "/");
+		urlfinal = urlfinal.replace(":/", "://");
+		return urlfinal;
 	}
 
-	public String getPath() {
-		// TODO Auto-generated method stub
-		return path;
-	}
 	public abstract void howtovisit(Url url);
 	
 	public int getDepth() {

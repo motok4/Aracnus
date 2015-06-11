@@ -11,7 +11,7 @@ public class test {
 		SimpleCore c = new SimpleCore();
 		c.setMaxPageToFetch(1000);
 		Aracnus ar = new Aracnus();
-		ar.addSeed("http://localhost/crawllertest/");
+		ar.addSeed("http://200.239.133.225/crawllertest/");
 		
 		long ini = System.currentTimeMillis();
 		ar.execute(c);

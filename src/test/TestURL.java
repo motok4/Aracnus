@@ -3,6 +3,7 @@ package test;
 import static org.junit.Assert.*;
 
 import org.aracnus.controller.SimpleCore;
+import org.aracnus.controller.Url;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -29,34 +30,63 @@ public class TestURL {
 	@After
 	public void tearDown() throws Exception {
 	}
-
 	@Test
+//	public void test2() {
+//			SimpleCore s = new SimpleCore();
+//			
+//
+//			String url = s.treatUrl( new Url("home/page1.html", 1, new Url("http://localhost/crawllertest/", 0, null) ) );
+//			assertTrue( url.equals( "http://localhost/crawllertest/home/page1.html") );
+////			assertTrue( s.getPath().equals("http://localhost/crawllertest/home/page1.html"));
+//			
+//			url = s.treatUrl( new Url("home/page2.html", 1, new Url("http://localhost/crawllertest/", 0, null) ));
+//			System.out.println(url);
+//			assertTrue( url.equals( "http://localhost/crawllertest/home/page2.html") );
+////			assertTrue( s.getPath().equals("http://localhost/crawllertest/home/page2.html"));
+//			
+//			url = s.treatUrl( new Url("home/page3.html", 1, new Url("http://localhost/crawllertest/", 0, null) ));
+//			System.out.println(url);
+//			assertTrue( url.equals( "http://localhost/crawllertest/home/page3.html") );
+////			assertTrue( s.getPath().equals("http://localhost/crawllertest/home/page3.html"));
+//			
+//			url = s.treatUrl( new Url("../page1/page6.html", 2, new Url("http://localhost/crawllertest/home/page1.html", 1, null) ) );
+//			assertTrue( url.equals("http://localhost/crawllertest/home/../page1/page6.html" ));
+////			assertTrue( s.getPath().equals("http://localhost/crawllertest/home/../page1/page6.html"));
+//			
+//			url = s.treatUrl( new Url("page2/page6.html",3, new Url("http://localhost/crawllertest/page1/page6.html", 2, null));
+//			System.out.println(url);
+//			assertTrue( url.equals("http://localhost/crawllertest/home/../page1/page6.html" ));
+////			assertTrue( s.getPath().equals("http://localhost/crawllertest/home/../page1/page2/page6.html"));
+//			
+//			
+//		}
+//	@Test
 	public void test() {
 		SimpleCore s = new SimpleCore();
 		
-		s.setPath("http://localhost/crawllertest/");
-		String url = s.treatUrl( "home/page1.html");
-		assertTrue( url.equals( "http://localhost/crawllertest/home/page1.html") );
-		assertTrue( s.getPath().equals("http://localhost/crawllertest/home/page1.html"));
 		
-		url = s.treatUrl( "home/page2.html");
+		String url = s.treatUrl( new Url("home/page1.html", 1, new Url("http://localhost/crawllertest/", 0, null) ) );
+		assertTrue( url.equals( "http://localhost/crawllertest/home/page1.html") );
+//		assertTrue( s.getPath().equals("http://localhost/crawllertest/home/page1.html"));
+		
+		url = s.treatUrl( new Url("home/page2.html", 1, new Url("http://localhost/crawllertest/", 0, null) ));
 		System.out.println(url);
 		assertTrue( url.equals( "http://localhost/crawllertest/home/page2.html") );
-		assertTrue( s.getPath().equals("http://localhost/crawllertest/home/page2.html"));
+//		assertTrue( s.getPath().equals("http://localhost/crawllertest/home/page2.html"));
 		
-		url = s.treatUrl( "home/page3.html");
+		url = s.treatUrl( new Url("home/page3.html", 1, new Url("http://localhost/crawllertest/", 0, null) ));
 		System.out.println(url);
 		assertTrue( url.equals( "http://localhost/crawllertest/home/page3.html") );
-		assertTrue( s.getPath().equals("http://localhost/crawllertest/home/page3.html"));
+//		assertTrue( s.getPath().equals("http://localhost/crawllertest/home/page3.html"));
 		
-		url = s.treatUrl( "../page1/page6.html");
+		url = s.treatUrl( new Url("../page1/page6.html", 2, new Url("http://localhost/crawllertest/home/page1.html", 1, null) ) );
 		assertTrue( url.equals("http://localhost/crawllertest/home/../page1/page6.html" ));
-		assertTrue( s.getPath().equals("http://localhost/crawllertest/home/../page1/page6.html"));
+//		assertTrue( s.getPath().equals("http://localhost/crawllertest/home/../page1/page6.html"));
 		
-		url = s.treatUrl( "page2/page6.html");
+		url = s.treatUrl( new Url("page2/page6.html",3, new Url("http://localhost/crawllertest/page1/page6.html", 2, null));
 		System.out.println(url);
-		assertTrue( url.equals("http://localhost/crawllertest/home/../page1/page2/page6.html" ));
-		assertTrue( s.getPath().equals("http://localhost/crawllertest/home/../page1/page2/page6.html"));
+		assertTrue( url.equals("http://localhost/crawllertest/home/../page1/page6.html" ));
+//		assertTrue( s.getPath().equals("http://localhost/crawllertest/home/../page1/page2/page6.html"));
 		
 		
 	}
